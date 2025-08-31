@@ -61,8 +61,9 @@ class APIDTool(tool.BatchTool, ManagedWindow):
             apid = attribute.get_value().split('::', 1)
             title = apid[0].removeprefix('1,')
             entry = apid[1]
-            if len(citation.get_page()) == 0:
+            if len(source.get_title()) == 0:
                 source.set_title(title)
+            if len(citation.get_page()) == 0:
                 citation.set_page(entry)
             else:
                 new_citation = Citation()
