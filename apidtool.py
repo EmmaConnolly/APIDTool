@@ -53,20 +53,22 @@ class APIDTool(tool.BatchTool, ManagedWindow):
         db.enable_signals()
 
     def split_citation(self, db, trans, source, citation):
+        source_apid = ""
         for attribute in citation.get_attribute_list():
             if attribute.get_type() != "_APID":
                 continue
-            apid = attribute.get_value().split('::', 1)
-            title = apid[0].removeprefix('1,')
-            entry = apid[1]
+            apid = attribute.get_value()
+            title = apid.split('::')[0]
+            if len(source_apid) == 0:
+                source_apid = title
             if len(source.get_title()) == 0:
                 source.set_title(title)
             if len(citation.get_page()) == 0:
-                citation.set_page(entry)
+                citation.set_page("APID: {0}".format(apid))
             else:
                 new_citation = Citation()
-                new_citation.set_page(entry)
-                if title == source.get_title():
+                new_citation.set_page("APID: {0}".format(apid))
+                if title == source_apid:
                     new_citation.source_handle = source.get_handle()
                 else:
                     new_source = Source()
