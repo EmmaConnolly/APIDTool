@@ -1,0 +1,15 @@
+register(TOOL,
+         id = 'APIDTool',
+         name = _("Fix blank Ancestry.com citations"),
+         description = _("Fills in the source and volume/page fields of blank Ancestry.com citations with the _APID for easier editing and merging."),
+         version = '0.0.0',
+         gramps_target_version = '6.0',
+         status = EXPERIMENTAL,
+         fname = 'apidtool.py',
+         authors = ["Emma Connolly"],
+         authors_email = ["emconnolly72@mailfence.com"],
+         category = TOOL_DBPROC,
+         toolclass = 'APIDTool',
+         optionclass = 'APIDToolOptions',
+         tool_modes = [TOOL_MODE_GUI]
+         )
