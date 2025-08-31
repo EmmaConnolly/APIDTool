@@ -2,7 +2,7 @@ from gi.repository import Gtk
 from gramps.gen.const import GRAMPS_LOCALE as glocale
 _ = glocale.translation.sgettext
 from gramps.gen.db import DbTxn
-from gramps.gen.lib import Person, Event, Citation, Source
+from gramps.gen.lib import Citation, Source, Person, Family, Event
 from gramps.gui.managedwindow import ManagedWindow
 from gramps.gui.plug import tool
 from gramps.gui.utils import ProgressMeter
@@ -85,6 +85,10 @@ class APIDTool(tool.BatchTool, ManagedWindow):
                         event = db.get_event_from_handle(object_handle)
                         event.add_citation(new_citation_handle)
                         db.commit_event(event, trans)
+                    elif class_name == Family.__name__:
+                        family = db.get_family_from_handle(object_handle)
+                        family.add_citation(new_citation_handle)
+                        db.commit_family(family, trans)
         db.commit_source(source, trans)
         db.commit_citation(citation, trans)
 
