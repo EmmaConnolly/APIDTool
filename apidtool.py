@@ -40,21 +40,19 @@ class APIDTool(tool.BatchTool, ManagedWindow):
                 source = db.get_source_from_handle(handle)
                 source_title = source.get_title()
                 citation_handle_list = list(db.find_backlink_handles(handle))
-                if len(source_title) == 0 and len(citation_handle_list) == 1:
-                    self.split_citation(db, trans, source, citation_handle_list[0][1])
-                    self.progress.step()
-                else:
-                    for class_name, citation_handle in citation_handle_list:
-                        citation = db.get_citation_from_handle(citation_handle)
-                        if len(citation.get_attribute_list()) == 1 and citation.get_attribute_list()[0].get_type() == "_APID":
+                for class_name, citation_handle in citation_handle_list:
+                    citation = db.get_citation_from_handle(citation_handle)
+                    if len(citation.get_page()) == 0:
+                        self.split_citation(db, trans, source, citation)
+                    else:
+                        for attribute in citation.get_attribute_list():
                             apid = citation.get_attribute_list()[0].get_value()
                             citation.set_page("{0} (APID: {1})".format(citation.get_page(), apid))
                             db.commit_citation(citation, trans)
                         self.progress.step()
         db.enable_signals()
 
-    def split_citation(self, db, trans, source, citation_handle):
-        citation = db.get_citation_from_handle(citation_handle)
+    def split_citation(self, db, trans, source, citation):
         for attribute in citation.get_attribute_list():
             if attribute.get_type() != "_APID":
                 continue
@@ -76,8 +74,8 @@ class APIDTool(tool.BatchTool, ManagedWindow):
                     new_citation.source_handle = db.add_source(new_source, trans)
                 new_citation.add_attribute(attribute)
                 new_citation_handle = db.add_citation(new_citation, trans)
-                citation_handle_list = list(db.find_backlink_handles(citation_handle))
-                for class_name, object_handle in citation_handle_list:
+                citation_ref_list = list(db.find_backlink_handles(citation.get_handle()))
+                for class_name, object_handle in citation_ref_list:
                     if class_name == Person.__name__:
                         person = db.get_person_from_handle(object_handle)
                         person.add_citation(new_citation_handle)
